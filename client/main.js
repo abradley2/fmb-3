@@ -3,6 +3,7 @@ const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
+const {omit} = require('./util')
 
 const routes = []
 const stores = {
@@ -59,13 +60,6 @@ function initView (namespace, config) {
 function initStore (namespace, store) {
   store.namespaced = true
   stores.modules[namespace] = store
-}
-
-function omit (obj, key) {
-  return Object.keys(obj).reduce(function (acc, cur) {
-    if (cur !== key) acc[cur] = obj[cur]
-    return acc
-  }, {})
 }
 
 if (process.env.NODE_ENV === 'development') {
