@@ -2776,6 +2776,10 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
+json-query@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/json-query/-/json-query-2.2.0.tgz#750bb1750f0f985a9ae267906a2d25754d529852"
+
 json-schema@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"

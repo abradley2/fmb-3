@@ -5,9 +5,16 @@
 </style>
 
 <template>
-  <div class=''>
-    <button v-on:click='$store.dispatch("home/fetchMessage")'>Fetch Message</button>
+  <div class='container'>
+    <button id='click-me' v-on:click='fetchMessage'>
+      Fetch Message
+    </button>
     <h3>{{state.message}}</h3>
+    <div>
+      <span class='red' id='find-me'>
+        Text Content
+      </span>
+    </div>
   </div>
 </template>
 
@@ -15,6 +22,9 @@
 const xhr = require('xhr')
 
 exports.methods = {
+  fetchMessage: function () {
+    this.$store.dispatch('home/fetchMessage')
+  }
 }
 
 exports.store = {
@@ -27,20 +37,19 @@ exports.store = {
   },
   actions: {
     fetchMessage: function ({commit}) {
-      console.log(this)
       xhr.get({
         url: '/message',
         json: true
       }, function (err, res) {
         if (!err) {
-          commit('getMessage', res)
+          commit('getMessage', res.body.message)
         }
       })
     }
   },
   mutations: {
-    getMessage: function (state, res) {
-      state.message = res.body.message
+    getMessage: function (state, message) {
+      state.message = message
     }
   }
 }
