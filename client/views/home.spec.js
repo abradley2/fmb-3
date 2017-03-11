@@ -8,8 +8,8 @@ test('home view renders a button', function (t) {
 
   render(function (err, rendered) {
     t.error(err)
-    const results = select(rendered, 'children[**][*id=click-me]')
-    t.ok(results[0])
+    const result = select(rendered, 'children[**][id=click-me]')
+    t.ok(result)
   })
 })
 
@@ -22,7 +22,7 @@ test('home view can change message', function (t) {
 
   render(function (err, rendered) {
     t.error(err)
-    const results = select(rendered, 'children[**][contents~/New Message/]')
-    t.ok(results)
+    const result = select(rendered, 'children[**][contents~/New Message/]')
+    t.ok(result)
   })
 })
