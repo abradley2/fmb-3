@@ -6,6 +6,7 @@
 
 <template>
   <div class='container'>
+    {{state.message}}
     <button id='click-me' v-on:click='fetchMessage'>
       Fetch Message
     </button>

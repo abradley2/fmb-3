@@ -1,11 +1,10 @@
 require('vuegister').register()
-const renderer = require('vue-server-renderer').createRenderer()
 const hyperx = require('hyperx')
 const jsonQuery = require('json-query')
 const h = hyperx(toJS)
 
 exports.createVue = function (sut, storeModules) {
-  console.log('SUT +++++++++', sut)
+  const renderer = require('vue-server-renderer').createRenderer()
   const Vue = require('vue')
   const Vuex = require('vuex')
 
@@ -33,7 +32,7 @@ exports.createVue = function (sut, storeModules) {
 
   function select (pojo, selector) {
     if (!pojo) throw new Error('Have not rendered successfully')
-    return jsonQuery(selector, {data: pojo}).value
+    return jsonQuery(selector, {data: pojo, allowRegexp: true}).value
   }
 
   return {

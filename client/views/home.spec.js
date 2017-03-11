@@ -22,7 +22,7 @@ test('home view can change message', function (t) {
 
   render(function (err, rendered) {
     t.error(err)
-    const results = select(rendered, 'children[**][content=New Message]')
-    t.ok(results[0])
+    const results = select(rendered, 'children[**][contents~/New Message/]')
+    t.ok(results)
   })
 })
