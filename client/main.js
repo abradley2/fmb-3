@@ -3,20 +3,18 @@ const Vuex = require('vuex')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
-const {omit} = require('./util')
+const {omit} = require('./utils')
 
 const routes = []
 const stores = {
-  state: {
-    app: 'StarterApp'
-  },
+  state: {},
   modules: {}
 }
 
 Vue.use(Router)
 Vue.use(Vuex)
 
-init('home', ['/', '/home'], require('./views/home.vue'))
+init(['/', '/home'], require('./views/home.vue'))
 
 const router = new Router({routes})
 const store = new Vuex.Store(stores)
@@ -30,11 +28,12 @@ new Vue({
 }).$mount('#app')
 
 // function to init a module and have it's routes/stores/component added to the app
-function init (namespace, paths, config) {
+function init (paths, config) {
   const store = config.store
+  const namespace = store.namespace
   const view = initView(namespace, config)
   initRoute(paths, view)
-  if (store) initStore(namespace, store)
+  initStore(namespace, store)
 }
 
 // initialize the route of a module

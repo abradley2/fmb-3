@@ -13,12 +13,12 @@
 
 <script>
 const xhr = require('xhr')
-var uid = 0
 
 exports.methods = {
 }
 
 exports.store = {
+  namespace: 'home',
   state: {
     filter: 'all',
     newTodo: 'New Todo',
