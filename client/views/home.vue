@@ -1,22 +1,22 @@
 <style>
-  .red {
-    color: #f00;
-  }
+.red {
+  color: #f00;
+}
 </style>
 
 <template>
-  <div class='container'>
-    {{state.message}}
-    <button id='click-me' v-on:click='fetchMessage'>
-      Fetch Message
-    </button>
-    <h3>{{state.message}}</h3>
-    <div>
-      <span class='red' id='find-me'>
-        Text Content
-      </span>
-    </div>
+<div class='container'>
+  {{state.message}}
+  <button id='click-me' v-on:click='fetchMessage'>
+    Fetch Message
+  </button>
+  <h3>{{state.message}}</h3>
+  <div>
+    <span class='red' id='find-me'>
+      Text Content
+    </span>
   </div>
+</div>
 </template>
 
 <script>
