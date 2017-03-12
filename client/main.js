@@ -20,11 +20,14 @@ initModule(['/signin'], require('./views/signin.vue'))
 
 // initialize all components
 Vue.component('v-navbar', require('./components/navbar.vue'))
+Vue.component('v-modal', require('./components/modal.vue'))
+Vue.component('v-error-modal', require('./components/error-modal.vue'))
 
 // initialize all stores
 initStore(require('./stores/env'))
 initStore(require('./stores/user'))
 initStore(require('./stores/location'))
+initStore(require('./stores/modal'))
 
 // App start
 const store = new Vuex.Store(stores)
