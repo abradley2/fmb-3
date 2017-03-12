@@ -1,6 +1,6 @@
 require('vuegister').register()
 const hyperx = require('hyperx')
-const jsonQuery = require('json-query')
+const jp = require('jsonpath')
 const h = hyperx(toJS)
 
 exports.createVue = function (sut, storeModules) {
@@ -31,8 +31,8 @@ exports.createVue = function (sut, storeModules) {
   }
 
   function select (pojo, selector) {
-    if (!pojo) throw new Error('Have not rendered successfully')
-    return jsonQuery(selector, {data: pojo, allowRegexp: true}).value
+    if (!pojo) throw new Error('pojoDOM is not defined')
+    return jp.query(pojo, selector)
   }
 
   return {
