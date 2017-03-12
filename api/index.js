@@ -7,4 +7,6 @@ api.get('/message', function (req, res) {
 
 api.use('/brackets', require('./routes/brackets'))
 
+api.use('/user', require('./routes/user'))
+
 module.exports = api
