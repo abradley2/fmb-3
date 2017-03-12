@@ -56,18 +56,14 @@ function createStoreConfig (view, modules) {
 }
 
 function addModuleToStore (store, modStore) {
-  Object.assign(store.modules, createStoreModule(modStore))
-}
-
-function createStoreModule (modStore) {
-  return {
+  Object.assign(store.modules, {
     [modStore.namespace]: {
       namespaced: true,
       state: modStore.state || {},
       actions: modStore.actions || {},
       mutations: modStore.mutations || {}
     }
-  }
+  })
 }
 
 function toJS (tag, attributes, children) {
@@ -76,13 +72,8 @@ function toJS (tag, attributes, children) {
     attributes
   }
   if (children) {
-    retVal.children = children.map(cn => {
-      if (typeof cn === 'string') {
-        return {
-          contents: cn
-        }
-      }
-      return cn
+    retVal.children = children.map(function (cn) {
+      return (typeof cn === 'string') ? {contents: cn} : cn
     })
   }
   if (attributes.id) retVal.id = attributes.id
