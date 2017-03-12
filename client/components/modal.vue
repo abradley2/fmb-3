@@ -38,7 +38,6 @@ exports.methods = {
     e.stopPropagation()
   },
   bgClick: function () {
-    console.log('this = ', this)
     if (this.$store.state.modal.closeOnBgClick) {
       this.$store.commit('modal/closeModal')
     }

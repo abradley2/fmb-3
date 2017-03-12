@@ -1,5 +1,4 @@
 const location = {
-  namespace: 'location',
   state: {
     prev: '',
     cur: window ? window.location.hash : ''

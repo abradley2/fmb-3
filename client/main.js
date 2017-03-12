@@ -7,6 +7,7 @@ const {omit} = require('./utils')
 
 const routes = []
 const stores = {
+  actions: {route: handleRoute},
   state: {},
   modules: {}
 }
@@ -23,6 +24,7 @@ initModule('signup', ['/signup'], require('./views/signup.vue'))
 initComponent('v-navbar', require('./components/navbar.vue'))
 initComponent('v-modal', require('./components/modal.vue'))
 initComponent('v-error-modal', require('./components/error-modal.vue'))
+initComponent('v-button', require('./components/button.vue'))
 
 // initialize all stores
 initStore('env', require('./stores/env'))
@@ -45,6 +47,10 @@ new Vue({
     return createElement(app)
   }
 }).$mount('#app')
+
+function handleRoute (ctx, params) {
+  router.push(params)
+}
 
 // function to init a module and have it's routes/stores/component added to the app
 function initModule (namespace, paths, config) {

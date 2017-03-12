@@ -1,24 +1,25 @@
 const xhr = require('xhr')
 
 const user = {
-  namespace: 'user',
   state: {
     signedIn: false,
     username: '',
     token: ''
   },
   actions: {
-    signin: function (ctx, {username, password}) {
+    signin: function (ctx, username) {
+      if (ctx.rootState.env.NODE_ENV === 'development') {
+        ctx.commit('signin', {username: 'dev', token: 'dev'})
+        ctx.dispatch('route', {path: 'home'}, {root: true})
+        return
+      }
       const payload = {
         url: '/user/signin',
-        data: {
-          username,
-          password
-        },
+        data: {username},
         json: true
       }
       xhr.post(payload, function (err, resp, body) {
-        if (err || resp.status >= 400) {
+        if (err || resp.statusCode >= 400) {
           const params = {
             component: 'error-modal',
             closeOnBgClick: true,
@@ -26,7 +27,7 @@ const user = {
               message: 'Login failed'
             }
           }
-          ctx.commit('modal/showModal', params, {root: true})
+          ctx.commit('modal/openModal', params, {root: true})
           return
         }
         if (body.success) {
@@ -34,6 +35,7 @@ const user = {
             username,
             token: body.token
           })
+          ctx.dispatch('route', {path: 'home'}, {root: true})
         }
       })
     }
