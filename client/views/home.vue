@@ -5,16 +5,19 @@
 </style>
 
 <template>
-<div class='container'>
-  {{state.message}}
-  <button id='click-me' v-on:click='fetchMessage'>
-    Fetch Message
-  </button>
-  <h3>{{state.message}}</h3>
-  <div>
-    <span class='red' id='find-me'>
-      Text Content
-    </span>
+<div>
+  <v-navbar></v-navbar>
+  <div class='center measure pt3'>
+    {{state.message}}
+    <button id='click-me' v-on:click='fetchMessage'>
+      Fetch Message
+    </button>
+    <h3>{{state.message}}</h3>
+    <div>
+      <span class='red' id='find-me'>
+        Text Content
+      </span>
+    </div>
   </div>
 </div>
 </template>
@@ -38,10 +41,11 @@ exports.store = {
   },
   actions: {
     fetchMessage: function ({commit}) {
-      xhr.get({
+      const payload = {
         url: '/message',
         json: true
-      }, function (err, res) {
+      }
+      xhr.get(payload, function (err, res) {
         if (!err) {
           commit('getMessage', res.body.message)
         }
