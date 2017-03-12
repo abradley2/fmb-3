@@ -15,19 +15,20 @@ Vue.use(Router)
 Vue.use(Vuex)
 
 // initialize al view modules
-initModule(['/', '/home'], require('./views/home.vue'))
-initModule(['/signin'], require('./views/signin.vue'))
+initModule('home', ['/', '/home'], require('./views/home.vue'))
+initModule('signin', ['/signin'], require('./views/signin.vue'))
+initModule('signup', ['/signup'], require('./views/signup.vue'))
 
 // initialize all components
-Vue.component('v-navbar', require('./components/navbar.vue'))
-Vue.component('v-modal', require('./components/modal.vue'))
-Vue.component('v-error-modal', require('./components/error-modal.vue'))
+initComponent('v-navbar', require('./components/navbar.vue'))
+initComponent('v-modal', require('./components/modal.vue'))
+initComponent('v-error-modal', require('./components/error-modal.vue'))
 
 // initialize all stores
-initStore(require('./stores/env'))
-initStore(require('./stores/user'))
-initStore(require('./stores/location'))
-initStore(require('./stores/modal'))
+initStore('env', require('./stores/env'))
+initStore('user', require('./stores/user'))
+initStore('location', require('./stores/location'))
+initStore('modal', require('./stores/modal'))
 
 // App start
 const store = new Vuex.Store(stores)
@@ -46,12 +47,10 @@ new Vue({
 }).$mount('#app')
 
 // function to init a module and have it's routes/stores/component added to the app
-function initModule (paths, config) {
-  const store = config.store
-  const namespace = store.namespace
+function initModule (namespace, paths, config) {
   const view = initView(namespace, config)
   initRoute(paths, view)
-  initStore(store)
+  if (config.store) initStore(namespace, config.store)
 }
 
 // initialize the route of a module
@@ -74,9 +73,14 @@ function initView (namespace, config) {
 }
 
 // for convenience, add the 'store' property of every vue as a module in the main store
-function initStore (store) {
+function initStore (namespace, store) {
   store.namespaced = true
-  stores.modules[store.namespace] = store
+  stores.modules[namespace] = store
+}
+
+function initComponent (name, config) {
+  if (config.store) initStore(name, config.store)
+  Vue.component(name, omit(config, 'store'))
 }
 
 if (process.env.NODE_ENV === 'development') {

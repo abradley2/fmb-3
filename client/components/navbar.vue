@@ -28,7 +28,7 @@
 <script>
 exports.methods = {
   toggleMenu: function () {
-    this.data.menuOpen = !this.data.menuOpen
+    this.menuOpen = !this.menuOpen
   }
 }
 
