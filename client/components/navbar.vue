@@ -1,16 +1,24 @@
 <template>
   <nav class='flex justify-between bg-black-90'>
-    <span
-      class='link white-70 hover-white flex items-center ph3 pointer'
-      v-on:click=''
-    >
-        <i class='fa fa-2x fa-bars'></i>
-    </span>
+    <div class='flex items-center'>
+      <span
+        :class='styles.navIcon'
+        @click='toggleMenu'
+      >
+          <i class='fa fa-2x fa-bars'></i>
+      </span>
+      <a
+        :class='styles.navIcon'
+        href='#/home'
+      >
+          <i class='fa fa-2x fa-home'></i>
+      </a>
+    </div>
     <div class='pa3 flex items-center'>
-      <a :class='styles.link' href='#signin'>Sign In</a>
+      <a :class='styles.link' href='#/signin'>Sign In</a>
       <a 
         :class='styles.signinLink'
-        href='#0'>
+        href='#/signup'>
           Sign Up
       </a>
     </div>
@@ -27,6 +35,7 @@ exports.methods = {
 exports.data = function () {
   return {
     styles: {
+      navIcon: 'link dib white-70 hover-white ph3 pointer',
       link: 'f6 link white dim mr3 mr4-ns',
       signinLink: 'f6 link white bg-animate hover-bg-white hover-black pv2 ph4 br-pill ba b--white-20'
     },
