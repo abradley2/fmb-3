@@ -5,9 +5,9 @@ const location = {
     cur: window ? window.location.hash : ''
   },
   mutations: {
-    route: function (to, from) {
-      this.state.prev = from
-      this.state.cur = to
+    setRoute: function (state, {to, from}) {
+      state.prev = from
+      state.cur = to
     }
   }
 }

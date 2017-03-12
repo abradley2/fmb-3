@@ -24,10 +24,15 @@ Vue.component('v-navbar', require('./components/navbar.vue'))
 // initialize all stores
 initStore(require('./stores/env'))
 initStore(require('./stores/user'))
+initStore(require('./stores/location'))
 
 // App start
-const router = new Router({routes})
 const store = new Vuex.Store(stores)
+const router = new Router({routes})
+
+router.afterEach(function (to, from) {
+  store.commit('location/setRoute', {to, from})
+})
 
 new Vue({
   router,
