@@ -1,10 +1,21 @@
 const {createVue} = require('../lib/vue-test-utils')
 const test = require('tape')
 
+const sut = require('./home.vue')
+
+sut.components = {
+  'v-navbar': require('../components/navbar')
+}
+
+const stores = {
+  home: sut.store,
+  user: require('../stores/user')
+}
+
 test('home view renders a button', function (t) {
   t.plan(2)
 
-  const {render, select} = createVue(require('./home.vue'))
+  const {render, select} = createVue(sut, stores)
 
   render(function (err, rendered) {
     t.error(err)
@@ -16,7 +27,7 @@ test('home view renders a button', function (t) {
 test('home view can change message', function (t) {
   t.plan(2)
 
-  const {render, select, vue} = createVue(require('./home.vue'))
+  const {render, select, vue} = createVue(sut, stores)
 
   vue.$store.commit('home/getMessage', 'New Message')
 

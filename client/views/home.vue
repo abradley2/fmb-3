@@ -7,7 +7,7 @@
 <template>
 <div>
   <v-navbar></v-navbar>
-  <div class='center measure pt3'>
+  <div class='center measure pt3 ph1'>
     {{state.message}}
     <button id='click-me' v-on:click='fetchMessage'>
       Fetch Message
@@ -32,7 +32,7 @@ exports.methods = {
 }
 
 exports.store = {
-  namespace: 'home',
+  namespaced: true,
   state: {
     filter: 'all',
     newTodo: 'New Todo',

@@ -1,25 +1,35 @@
 require('vuegister').register()
 const hyperx = require('hyperx')
 const jp = require('jsonpath')
+const {omit} = require('../utils')
 const h = hyperx(toJS)
 
-exports.createVue = function (sut, storeModules) {
+exports.createVue = function (sut, modules = {}) {
   const renderer = require('vue-server-renderer').createRenderer()
   const Vue = require('vue')
   const Vuex = require('vuex')
 
   Vue.use(Vuex)
 
-  const namespace = sut.store.namespace
-  const storeConfig = createStoreConfig(sut, storeModules || [])
-  const store = new Vuex.Store(storeConfig)
+  // all views have a computed "state" function that is a computed to their
+  //  own store need to replicate this
+  Object.keys(modules).forEach(function (ns) {
+    if (modules[ns] === sut.store) {
+      sut.computed = sut.computed || {}
+      sut.computed.state = function () {
+        return this.$store.state[ns]
+      }
+    }
+  })
 
-  sut.computed = sut.computed || {}
-  sut.computed.state = function () {
-    return this.$store.state[namespace]
+  const storeConfig = {
+    modules,
+    state: {}
   }
 
-  const vueConfig = Object.assign({}, sut, {store})
+  const store = new Vuex.Store(storeConfig)
+
+  const vueConfig = Object.assign({}, omit(sut, 'store'), {store})
   const vue = new Vue(vueConfig)
 
   function render (cb) {
@@ -43,29 +53,7 @@ exports.createVue = function (sut, storeModules) {
   }
 }
 
-// create a store using the mocks provided.
-// then calls "add module to store"
-function createStoreConfig (view, modules) {
-  const store = {
-    modules: {},
-    state: {}
-  }
-  addModuleToStore(store, view.store)
-  modules.forEach(addModuleToStore.bind({}, store))
-  return store
-}
-
-function addModuleToStore (store, modStore) {
-  Object.assign(store.modules, {
-    [modStore.namespace]: {
-      namespaced: true,
-      state: modStore.state || {},
-      actions: modStore.actions || {},
-      mutations: modStore.mutations || {}
-    }
-  })
-}
-
+// function to use with hyperx to turn html string into JSON tree
 function toJS (tag, attributes, children) {
   const retVal = {
     tag,

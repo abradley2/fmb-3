@@ -1,4 +1,5 @@
 const modal = {
+  namespaced: true,
   state: {
     show: false,
     closeOnBgClick: false,

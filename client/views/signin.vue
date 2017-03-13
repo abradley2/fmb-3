@@ -1,7 +1,7 @@
 <template>
 <div>
   <v-navbar></v-navbar>
-  <div class='measure center'>
+  <div class='measure center ph1'>
     <h3>Sign In</h3>
     <p>(This is just a prototype, so just a button for now)</p>
     <hr/>
@@ -12,6 +12,7 @@
 
 <script>
 exports.store = {
+  namespaced: true,
   state: {
     username: ''
   },

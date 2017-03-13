@@ -41,8 +41,6 @@ exports.methods = {
 
 exports.computed = {
   loggedIn: function () {
-    console.log(arguments)
-    console.log(this.$store)
     return this.$store.state.user.signedIn
   }
 }

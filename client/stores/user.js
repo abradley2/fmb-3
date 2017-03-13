@@ -1,6 +1,7 @@
 const xhr = require('xhr')
 
 const user = {
+  namespaced: true,
   state: {
     signedIn: false,
     username: '',
