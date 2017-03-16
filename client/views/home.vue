@@ -31,8 +31,13 @@ exports.methods = {
   }
 }
 
+exports.created = function () {
+  if (this.$store.state.user.loggedIn) {
+    this.$store.dispatch('home/fetchDashboard')
+  }
+}
+
 exports.store = {
-  namespaced: true,
   state: {
     filter: 'all',
     newTodo: 'New Todo',
@@ -40,9 +45,9 @@ exports.store = {
     message: ''
   },
   actions: {
-    fetchMessage: function ({commit}) {
+    fetchDashboard: function ({rootState, commit}) {
       const payload = {
-        url: '/message',
+        url: `/user/${rootState.user.userId}/dashboard`,
         json: true
       }
       xhr.get(payload, function (err, res) {
@@ -53,7 +58,7 @@ exports.store = {
     }
   },
   mutations: {
-    getMessage: function (state, message) {
+    getDashboard: function (state, message) {
       state.message = message
     }
   }

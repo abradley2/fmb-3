@@ -36,6 +36,9 @@
 exports.methods = {
   toggleMenu: function () {
     this.menuOpen = !this.menuOpen
+  },
+  logout: function () {
+    this.$store.dispatch('user/logout')
   }
 }
 

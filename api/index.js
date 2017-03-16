@@ -9,4 +9,6 @@ api.use('/brackets', require('./routes/brackets'))
 
 api.use('/user', require('./routes/user'))
 
+api.use('/auth', require('./routes/auth'))
+
 module.exports = api

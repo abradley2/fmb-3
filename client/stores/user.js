@@ -9,11 +9,6 @@ const user = {
   },
   actions: {
     signin: function (ctx, username) {
-      if (ctx.rootState.env.NODE_ENV === 'development') {
-        ctx.commit('signin', {username: 'dev', token: 'dev'})
-        ctx.dispatch('route', {path: 'home'}, {root: true})
-        return
-      }
       const payload = {
         url: '/user/signin',
         data: {username},
@@ -34,7 +29,9 @@ const user = {
         if (body.success) {
           ctx.commit('signin', {
             username,
-            token: body.token
+            userId: body.userId,
+            token: body.token,
+            key: body.key
           })
           ctx.dispatch('route', {path: 'home'}, {root: true})
         }

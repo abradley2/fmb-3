@@ -19,6 +19,7 @@ Vue.use(Vuex)
 initModule('home', ['/', '/home'], require('./views/home.vue'))
 initModule('signin', ['/signin'], require('./views/signin.vue'))
 initModule('signup', ['/signup'], require('./views/signup.vue'))
+initModule('profile', ['/profile'], require('./views/profile.vue'))
 
 // initialize all components
 initComponent('v-navbar', require('./components/navbar.vue'))
