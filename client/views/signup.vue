@@ -7,25 +7,32 @@
     </div>
     <hr />
     <div :class='styles.formBody'>
-      <div :class='styles.formSection'>
+      <div :class='styles.section'>
         <div :class='styles.formGroup'>
           <label :class='styles.formLabel'>Username</label>
+          <br/>
           <input
             type='username'
             :class='styles.formInput'
             v-model='username'
           />
         </div>
+      </div>
+      <div :class='styles.section'>
         <div :class='styles.formGroup'>
           <label :class='styles.formLabel'>Password</label>
+          <br/>
           <input
             type='password'
             :class='styles.formInput'
             v-model='password'
           />
         </div>
+      </div>
+      <div :class='styles.section'>
         <div :class='styles.formGroup'>
           <label :class='styles.formLabel'>Confirm Password</label>
+          <br/>
           <input
             type='password'
             :class='styles.formInput'
@@ -33,7 +40,7 @@
           />
         </div>
       </div>
-      <div :class='styles.formSection'>
+      <div class='tc'>
         <v-button
           text='submit'
           type='confirm'
@@ -49,11 +56,10 @@
 const xhr = require('xhr')
 
 const styles = {
+  section: 'flex justify-center',
   formGroup: 'mb4',
-  formLabel: 'db mb2',
-  formBody: 'br3 flex flex-wrap pv2 ph3 w6',
-  formInput: 'db input-reset h2 ba b--black-80 br2',
-  formSection: 'ph2 center'
+  formLabel: 'dib mb2',
+  formInput: 'dib input-reset h2 ba b--black-80 br2'
 }
 
 exports.store = {
