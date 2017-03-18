@@ -1,3 +1,5 @@
+const {pick} = require('../utils')
+
 const location = {
   namespaced: true,
   state: {
@@ -6,8 +8,8 @@ const location = {
   },
   mutations: {
     setRoute: function (state, {to, from}) {
-      state.prev = from
-      state.cur = to
+      state.prev = pick(from, ['path', 'fullPath', 'hash'])
+      state.cur = pick(from, ['path', 'fullPath', 'hash'])
     }
   }
 }

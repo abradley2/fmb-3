@@ -4,7 +4,7 @@ const createLogger = require('vuex/dist/logger')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
-const {omit} = require('./utils')
+const {omit, recordState} = require('./utils')
 
 const routes = []
 const stores = {
@@ -84,6 +84,9 @@ function initView (namespace, config) {
 // for convenience, add the 'store' property of every vue as a module in the main store
 function initStore (namespace, store) {
   store.namespaced = true
+  if (process.env.NODE_ENV === 'development') {
+    recordState(namespace, store, require('localforage'))
+  }
   stores.modules[namespace] = store
 }
 
@@ -93,7 +96,9 @@ function initComponent (name, config) {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  // wrap the xhr library used to hit the dev server when on local
+  // wrap the xhr library used to hit the dev server when on local.
+  // I find this simpler than always having to proxy.
+  // Also enforces that the xhr.method pattern is always used
   const methods = ['post', 'put', 'patch', 'head', 'del', 'get']
 
   methods.forEach(function (method) {
