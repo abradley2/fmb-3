@@ -5,17 +5,34 @@ const user = {
   state: {
     signedIn: false,
     username: '',
-    token: ''
+    token: '',
+    key: ''
   },
   actions: {
-    signin: function (ctx, username) {
+    logout: function ({state, commit}) {
       const payload = {
-        url: '/user/signin',
-        data: {username},
+        url: '/auth/logout',
+        data: {
+          token: state.token,
+          key: state.key,
+          username: state.username
+        }
+      }
+
+      xhr.post(payload)
+      commit('logout')
+    },
+    signin: function (ctx, {username, password}) {
+      const payload = {
+        url: '/auth/login',
+        data: {
+          email: username,
+          password: password
+        },
         json: true
       }
       xhr.post(payload, function (err, resp, body) {
-        if (err || resp.statusCode >= 400) {
+        if (err || resp.statusCode >= 300) {
           const params = {
             component: 'error-modal',
             closeOnBgClick: true,
@@ -39,10 +56,17 @@ const user = {
     }
   },
   mutations: {
-    signin: function (state, {username, token}) {
+    signin: function (state, {username, token, key}) {
       state.username = username
       state.signedIn = true
       state.token = token
+      state.key = key
+    },
+    logout: function (state) {
+      state.username = ''
+      state.signedIn = false
+      state.token = ''
+      state.key = ''
     }
   }
 }

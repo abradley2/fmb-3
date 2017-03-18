@@ -53,7 +53,7 @@ exports.data = function () {
     styles: {
       navIcon: 'link dib white-70 hover-white ph3 pointer',
       link: 'f6 link white dim mr3 mr4-ns',
-      signinLink: 'f6 link white bg-animate hover-bg-white hover-black pv2 ph3 br-pill ba b--white-20'
+      signinLink: 'f6 pointer link white bg-animate hover-bg-white hover-black pv2 ph3 br-pill ba b--white-20'
     },
     menuOpen: false
   }

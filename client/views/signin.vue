@@ -2,58 +2,49 @@
 <div>
   <v-navbar></v-navbar>
   <div class='measure center ph1'>
-    <h3>Sign In</h3>
+    <div class='tc'>
+      <h3>Sign In</h3>
+    </div>
     <hr/>
-    <div :class='styles.formGroup'>
-      <label :class='styles.formLabel'>Email</label>
-      <input
-        type='email'
-        :class='styles.formInput'
-        v-model='email'
-      />
+    <div :class='styles.section'>
+      <div :class='styles.formGroup'>
+        <label :class='styles.formLabel'>Username</label>
+        <br/>
+        <input
+          type='text'
+          :class='styles.formInput'
+          v-model='username'
+        />
+      </div>
+      <div :class='styles.formGroup'>
+        <label :class='styles.formLabel'>Password</label>
+        <br/>
+        <input
+          type='password'
+          :class='styles.formInput'
+          v-model='password'
+        />
+      </div>
     </div>
-    <div :class='styles.formGroup'>
-      <label :class='styles.formLabel'>Password</label>
-      <input
-        type='password'
-        :class='styles.formInput'
-        v-model='password'
-      />
+    <div class='tc'>
+      <v-button type='confirm' text='Submit' :onclick='signin'/></v-button>
     </div>
-    <v-button type='confirm' text='Submit' :onclick='signin'/></v-button>
   </div>
 </div>
 </template>
 
 <script>
 const styles = {
+  section: 'flex flex-column items-center',
   formGroup: 'mb4',
-  formLabel: 'db mb2',
-  formInput: 'db input-reset h2 ba b--black-80 br2'
+  formLabel: 'mb2',
+  formInput: 'input-reset h2 ba b--black-80 br2'
 }
 
 exports.store = {
-  state: {
-    username: ''
-  },
-  mutations: {
-    init: function (state) {
-      state.username = ''
-    },
-    setUsername: function (state, username) {
-      state.username = username
-    }
-  }
-}
-
-exports.created = function () {
-  this.$store.commit('signin/init')
 }
 
 exports.methods = {
-  setUsername: function (e) {
-    this.$store.commit('signin/setUsername', e.target.value)
-  },
   signin: function () {
     const payload = {
       username: this.username,
