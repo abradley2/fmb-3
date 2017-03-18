@@ -3,7 +3,7 @@ const xhr = require('xhr')
 const user = {
   namespaced: true,
   state: {
-    signedIn: false,
+    loggedIn: false,
     username: '',
     token: '',
     key: ''
@@ -19,7 +19,7 @@ const user = {
         }
       }
 
-      xhr.post(payload)
+      xhr.post(payload, Function.prototype)
       commit('logout')
     },
     login: function (ctx, {username, password}) {
@@ -58,13 +58,13 @@ const user = {
   mutations: {
     signin: function (state, {username, token, key}) {
       state.username = username
-      state.signedIn = true
+      state.loggedIn = true
       state.token = token
       state.key = key
     },
     logout: function (state) {
       state.username = ''
-      state.signedIn = false
+      state.loggedIn = false
       state.token = ''
       state.key = ''
     }

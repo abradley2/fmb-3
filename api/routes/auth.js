@@ -48,4 +48,10 @@ authRoute.post('/login', function (req, res) {
   })
 })
 
+authRoute.post('/logout', function (req, res) {
+  res.json({
+    success: true
+  })
+})
+
 module.exports = authRoute

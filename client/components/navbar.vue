@@ -16,7 +16,10 @@
     </div>
     <div v-if='loggedIn' class='pa3 flex items-center'>
       <a :class='styles.link' href='#/profile'>Profile</a>
-      <span :class='styles.signinLink'>
+      <span 
+        :class='styles.signinLink'
+        @click='logout'
+      >
         Logout
         <i class='fa fa-sign-out'></i>
       </span>
@@ -44,7 +47,7 @@ exports.methods = {
 
 exports.computed = {
   loggedIn: function () {
-    return this.$store.state.user.signedIn
+    return this.$store.state.user.loggedIn
   }
 }
 
