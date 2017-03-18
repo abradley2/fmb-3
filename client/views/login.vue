@@ -3,7 +3,7 @@
   <v-navbar></v-navbar>
   <div class='measure center ph1'>
     <div class='tc'>
-      <h3>Sign In</h3>
+      <h3>Login</h3>
     </div>
     <hr/>
     <div :class='styles.section'>
@@ -13,7 +13,8 @@
         <input
           type='text'
           :class='styles.formInput'
-          v-model='username'
+          @input='set("username", $event.target.value)'
+          :value='state.username'
         />
       </div>
       <div :class='styles.formGroup'>
@@ -22,12 +23,12 @@
         <input
           type='password'
           :class='styles.formInput'
-          v-model='password'
+          @input='set("password", $event.target.value)'
         />
       </div>
     </div>
     <div class='tc'>
-      <v-button type='confirm' text='Submit' :onclick='signin'/></v-button>
+      <v-button type='confirm' text='Submit' :onclick='login'/></v-button>
     </div>
   </div>
 </div>
@@ -42,22 +43,32 @@ const styles = {
 }
 
 exports.store = {
+  state: {
+    username: '',
+    password: ''
+  },
+  mutations: {
+    set: function (state, {attr, value}) {
+      state[attr] = value
+    }
+  }
 }
 
 exports.methods = {
-  signin: function () {
+  set: function (attr, value) {
+    this.$store.commit('login/set', {attr, value})
+  },
+  login: function () {
     const payload = {
-      username: this.username,
-      password: this.password
+      username: this.state.username,
+      password: this.state.password
     }
-    this.$store.dispatch('user/signin', payload)
+    this.$store.dispatch('user/login', payload)
   }
 }
 
 exports.data = function () {
   return {
-    password: '',
-    username: '',
     styles
   }
 }

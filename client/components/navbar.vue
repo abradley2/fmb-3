@@ -22,10 +22,10 @@
       </span>
     </div>
     <div v-if='!loggedIn' class='pa3 flex items-center'>
-      <a :class='styles.link' href='#/signin'>Login</a>
+      <a :class='styles.link' href='#/login'>Login</a>
       <a 
         :class='styles.signinLink'
-        href='#/signup'>
+        href='#/register'>
           Register
       </a>
     </div>

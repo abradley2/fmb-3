@@ -3,7 +3,9 @@
   <h3>Oops!</h3>
   <span>{{message}}</span>
   <br/>
-  <v-button class='mt3' :onclick='clickClose' text='Close'></v-button>
+  <div class='absolute bottom-1 tc w-100'>
+    <v-button class='mt3' :onclick='clickClose' text='Close'></v-button>
+  </div>
 </div>
 </template>
 

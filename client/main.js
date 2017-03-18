@@ -1,5 +1,6 @@
 const Vue = require('vue')
 const Vuex = require('vuex')
+const createLogger = require('vuex/dist/logger')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
@@ -7,6 +8,7 @@ const {omit} = require('./utils')
 
 const routes = []
 const stores = {
+  plugins: [createLogger()],
   actions: {route: handleRoute},
   state: {},
   modules: {}
@@ -17,8 +19,8 @@ Vue.use(Vuex)
 
 // initialize al view modules
 initModule('home', ['/', '/home'], require('./views/home.vue'))
-initModule('signin', ['/signin'], require('./views/signin.vue'))
-initModule('signup', ['/signup'], require('./views/signup.vue'))
+initModule('login', ['/login'], require('./views/login.vue'))
+initModule('register', ['/register'], require('./views/register.vue'))
 initModule('profile', ['/profile'], require('./views/profile.vue'))
 
 // initialize all components

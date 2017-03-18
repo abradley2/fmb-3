@@ -14,7 +14,8 @@
           <input
             type='username'
             :class='styles.formInput'
-            v-model='username'
+            @input='set("username", $event.target.value)'
+            :value='state.username'
           />
         </div>
       </div>
@@ -25,7 +26,8 @@
           <input
             type='password'
             :class='styles.formInput'
-            v-model='password'
+            @input='set("password", $event.target.value)'
+            :value='state.password'
           />
         </div>
       </div>
@@ -36,7 +38,8 @@
           <input
             type='password'
             :class='styles.formInput'
-            v-model='passwordConfirm'
+            @input='set("passwordConfirm", $event.target.value)'
+            :value='state.passwordConfirm'
           />
         </div>
       </div>
@@ -63,8 +66,18 @@ const styles = {
 }
 
 exports.store = {
+  state: {
+    username: '',
+    password: '',
+    passwordConfirm: ''
+  },
+  mutations: {
+    set: function (state, {attr, value}) {
+      state[attr] = value
+    }
+  },
   actions: {
-    postSignup: function ({dispatch, commit}, data) {
+    registerUser: function ({dispatch, commit}, data) {
       const payload = {
         data: {
           email: data.username,
@@ -81,7 +94,7 @@ exports.store = {
             token: body.token,
             key: body.key
           }
-          commit('user/signin', info, {root: true})
+          commit('user/login', info, {root: true})
           dispatch('route', {path: 'home'}, {root: true})
         }
       })
@@ -90,12 +103,15 @@ exports.store = {
 }
 
 exports.methods = {
+  set: function (attr, value) {
+    this.$store.commit('register/set', {attr, value})
+  },
   submitForm: function () {
     const payload = {
       username: this.username,
       password: this.password
     }
-    this.$store.dispatch('signup/postSignup', payload)
+    this.$store.dispatch('register/registerUser', payload)
   }
 }
 
@@ -107,10 +123,7 @@ exports.computed = {
 
 exports.data = function () {
   return {
-    styles,
-    username: '',
-    password: '',
-    passwordConfirm: ''
+    styles
   }
 }
 </script>

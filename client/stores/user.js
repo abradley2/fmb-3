@@ -22,7 +22,7 @@ const user = {
       xhr.post(payload)
       commit('logout')
     },
-    signin: function (ctx, {username, password}) {
+    login: function (ctx, {username, password}) {
       const payload = {
         url: '/auth/login',
         data: {

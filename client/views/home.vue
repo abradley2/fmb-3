@@ -8,16 +8,7 @@
 <div>
   <v-navbar></v-navbar>
   <div class='center measure pt3 ph1'>
-    {{state.message}}
-    <button id='click-me' v-on:click='fetchMessage'>
-      Fetch Message
-    </button>
-    <h3>{{state.message}}</h3>
-    <div>
-      <span class='red' id='find-me'>
-        Text Content
-      </span>
-    </div>
+    <h3>Home</h3>
   </div>
 </div>
 </template>
@@ -26,40 +17,35 @@
 const xhr = require('xhr')
 
 exports.methods = {
-  fetchMessage: function () {
-    this.$store.dispatch('home/fetchMessage')
-  }
 }
 
 exports.created = function () {
-  if (this.$store.state.user.loggedIn) {
-    this.$store.dispatch('home/fetchDashboard')
+  const user = this.$store.state.user
+  if (user.signedIn) {
+    this.$store.dispatch('home/fetchDashboard', {userId: user.userId})
   }
 }
 
 exports.store = {
   state: {
-    filter: 'all',
-    newTodo: 'New Todo',
-    todos: [],
-    message: ''
+    upcomingTournaments: []
   },
   actions: {
-    fetchDashboard: function ({rootState, commit}) {
+    fetchDashboard: function ({rootState, commit}, data) {
       const payload = {
-        url: `/user/${rootState.user.userId}/dashboard`,
+        url: `/user/${data.userId}/dashboard`,
         json: true
       }
       xhr.get(payload, function (err, res) {
         if (!err) {
-          commit('getMessage', res.body.message)
+          commit('getDashboard', res.body)
         }
       })
     }
   },
   mutations: {
-    getDashboard: function (state, message) {
-      state.message = message
+    getDashboard: function (state, dashboard) {
+      state.upcomingTournaments = dashboard.upcomingTournaments
     }
   }
 }

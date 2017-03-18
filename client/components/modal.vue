@@ -6,7 +6,7 @@
 >
   <div
     @click='stopEvent'
-    class='measure center cursor-auto br3 bg-white modal mt5 mt6-ns pv2 ph3'
+    class='relative measure center cursor-auto br3 bg-white modal mt5 mt6-ns pv2 ph3'
   >
     <!-- For every possible modal that can be displayed, add it below -->
     <v-error-modal
