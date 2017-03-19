@@ -24,6 +24,7 @@
           type='password'
           :class='styles.formInput'
           @input='set("password", $event.target.value)'
+          :value='state.password'
         />
       </div>
     </div>

@@ -8,22 +8,33 @@
 <div>
   <v-navbar></v-navbar>
   <div class='center measure pt3 ph1'>
-    <h3>Home</h3>
-    <hr/>
-    <div>
-
-    </div>
-    <div>
-      
+    <div class='ph3 pv3 mb4 bg-blue br2'>
+      <h2 class='white f4'>Find a tournament</h2>
+      <div class='dt'>
+        <input 
+          class='input-reset h2 pv0 ph2 lh-title bn bg-white br3--left'
+          placeholder='Enter Tournament ID here'
+        ></input>
+        <div class='ph3 pointer bg-black-90 hover-bg-black-50 white dtc v-mid '>
+          <span>Go</span>
+        </div>
+      </div>
     </div>
     <div v-if='loggedIn'>
+      <div>
+        <v-button 
+          type='confirm'
+          text='Create a Tournament'
+          :onclick='createTournament'
+        ></v-button>
+      </div>
       <div v-for='tournament in state.upcomingTournaments'>
         <h3>{{tournament.name}}</h3>
         <span>{{tournament.startDate}}</span>
       </div>
     </div>
     <div v-else>
-      <h3>Login?</h3>
+      <h3>Login to Create a Tournament</h3>
     </div>
   </div>
 </div>
@@ -37,11 +48,13 @@ const styles = {
 }
 
 exports.methods = {
+  createTournament: function () {
+    this.$store.dispatch('route', {path: '/create-tournament'})
+  }
 }
 
 exports.created = function () {
   const user = this.$store.state.user
-  console.log('home.created()')
   if (user.loggedIn) {
     this.$store.dispatch('home/fetchDashboard', {userId: user.userId})
   }
