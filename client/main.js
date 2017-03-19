@@ -1,6 +1,5 @@
 const Vue = require('vue')
 const Vuex = require('vuex')
-const createLogger = require('vuex/dist/logger')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
@@ -10,19 +9,12 @@ const {omit} = require('./utils')
 window.Promise = require('es6-promise').Promise
 
 const routes = []
-const stores = {
-  plugins: [createLogger()],
+const storeConfig = {
+  plugins: [],
   actions: {route: handleRoute},
   state: {},
   modules: {}
 }
-
-const load = persist('MyVueApp', 10)(stores)
-
-console.time('loadState')
-load.then(function () {
-  console.timeEnd('loadState')
-})
 
 Vue.use(Router)
 Vue.use(Vuex)
@@ -45,8 +37,15 @@ initStore('user', require('./stores/user'))
 initStore('location', require('./stores/location'))
 initStore('modal', require('./stores/modal'))
 
+// Add development plugins if in dev
+if (process.env.NODE_ENV === 'development') {
+  const createLogger = require('vuex/dist/logger')
+  storeConfig.plugins.push(createLogger())
+  persist('MyVueApp', 10)(storeConfig)
+}
+
 // App start
-const store = new Vuex.Store(stores)
+const store = new Vuex.Store(storeConfig)
 const router = new Router({routes})
 
 router.afterEach(function (to, from) {
@@ -94,7 +93,7 @@ function initView (namespace, config) {
 // for convenience, add the 'store' property of every vue as a module in the main store
 function initStore (namespace, store) {
   store.namespaced = true
-  stores.modules[namespace] = store
+  storeConfig.modules[namespace] = store
 }
 
 function initComponent (name, config) {

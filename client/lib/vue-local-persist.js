@@ -1,6 +1,7 @@
 const equals = require('deep-equal')
 
-module.exports = function (name, version) {
+module.exports = function (name, version, promise) {
+  const Promise = window.Promise || promise
   var db
   var resolveCreate
   var rejectCreate
