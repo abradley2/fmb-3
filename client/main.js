@@ -36,7 +36,11 @@ initStore('user', require('./stores/user'))
 initStore('location', require('./stores/location'))
 initStore('modal', require('./stores/modal'))
 
-wrapStore(stores)
+const load = wrapStore(stores)
+console.time('hotReload')
+load.then(function () {
+  console.timeEnd('hotReload')
+})
 
 // App start
 const store = new Vuex.Store(stores)

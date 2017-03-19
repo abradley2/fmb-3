@@ -16,9 +16,7 @@ module.exports = function (name, version) {
     rejectCreate = reject
   })
 
-  openRequest.onerror = function (err) {
-    console.error(err)
-  }
+  openRequest.onerror = rejectCreate
 
   openRequest.onupgradeneeded = function (e) {
     db = e.target.result
