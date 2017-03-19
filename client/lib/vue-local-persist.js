@@ -75,12 +75,6 @@ module.exports = function (name, version) {
 
     store.state.__namespace__ = namespace
 
-    store.mutations.__reloadState__ = function (state, newState) {
-      for (var key in newState) {
-        state[key] = newState[key]
-      }
-    }
-
     // wrap store mutations to be setters
     for (var methodName in store.mutations) {
       store.mutations[methodName] = (function (mutation) {
@@ -91,6 +85,12 @@ module.exports = function (name, version) {
           writer(state)
         }
       })(store.mutations[methodName])
+    }
+
+    store.mutations.__reloadState__ = function (state, newState) {
+      for (var key in newState) {
+        state[key] = newState[key]
+      }
     }
 
     createPromise
@@ -121,8 +121,10 @@ module.exports = function (name, version) {
         // unless the store's default state has changed, load the stored state
         if (equals(prev, store.state)) {
           store.mutations.__reloadState__(store.state, stored)
+          return Promise.resolve()
+        } else {
+          return handler('prev', 'put', store.state)
         }
-        return Promise.resolve()
       })
       .catch(function (err) {
         console.error(err)
