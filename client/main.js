@@ -4,7 +4,7 @@ const createLogger = require('vuex/dist/logger')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
-const wrapStore = require('./lib/vue-local-persist')('MyVueApp', 3)
+const wrapStore = require('./lib/vue-local-persist')('MyVueApp', 10)
 const {omit} = require('./utils')
 
 const routes = []

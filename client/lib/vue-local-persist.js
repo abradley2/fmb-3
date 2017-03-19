@@ -3,6 +3,7 @@ const equals = require('deep-equal')
 module.exports = function (name, version) {
   var db
   var resolveCreate
+  var rejectCreate
 
   if (typeof name !== 'string' || typeof version !== 'number') {
     throw new Error('Please provide name (string) and version number (integer)')
@@ -10,8 +11,9 @@ module.exports = function (name, version) {
 
   const openRequest = window.indexedDB.open(name, parseInt(version, 10))
 
-  const createPromise = new Promise(function (resolve) {
+  const createPromise = new Promise(function (resolve, reject) {
     resolveCreate = resolve
+    rejectCreate = reject
   })
 
   openRequest.onerror = function (err) {
@@ -21,18 +23,28 @@ module.exports = function (name, version) {
   openRequest.onupgradeneeded = function (e) {
     db = e.target.result
 
-    if (db.objectStoreNames.contains('store')) {
-      db.deleteObjectStore('store')
+    for (var i = 0; i < db.objectStoreNames.length; i++) {
+      db.deleteObjectStore(db.objectStoreNames[i])
     }
 
-      // create the objectStore if needed
-    const objectStore = db.createObjectStore('store', {keyPath: '__namespace__'})
-
-    objectStore.createIndex('prev', 'prev', {unique: false})
-    objectStore.createIndex('state', 'state', {unique: false})
-    objectStore.transaction.oncomplete = function () {
-      resolveCreate(storeTransaction(db))
+    function checkReady () {
+      if (
+        db.objectStoreNames.contains('prev') &&
+        db.objectStoreNames.contains('stored')
+      ) {
+        resolveCreate(storeTransaction(db))
+      }
     }
+
+    const stored = db.createObjectStore('stored', {keyPath: '__namespace__'})
+    stored.createIndex('state', 'state', {unique: false})
+    stored.transaction.oncomplete = checkReady
+    stored.transaction.onerror = rejectCreate
+
+    const prev = db.createObjectStore('prev', {keyPath: '__namespace__'})
+    prev.createIndex('state', 'state', {unique: false})
+    prev.transaction.oncomplete = checkReady
+    prev.transaction.onerror = rejectCreate
   }
 
   openRequest.onsuccess = function (e) {
@@ -56,12 +68,14 @@ module.exports = function (name, version) {
     // eachother anyway
     const writer = bottleneck(function (state) {
       createPromise.then(function (handler) {
-        handler('put', state)
+        handler('stored', 'put', state)
       })
     }, 500)
 
     if (!store.mutations) store.mutations = {}
     if (!store.state) store.state = {}
+
+    store.state.__namespace__ = namespace
 
     store.mutations.__reloadState__ = function (state, newState) {
       for (var key in newState) {
@@ -84,27 +98,33 @@ module.exports = function (name, version) {
     createPromise
       .then(function (handler) {
         // grab the data that was previously set
-        return handler('get', namespace)
-          .then(function (data) {
-            return {handler, data}
+        return handler('prev', 'get', namespace)
+          .then(function (prev) {
+            return {handler, prev}
           })
       })
-      .then(function ({handler, data}) {
-        if (typeof data === 'undefined') {
-          const initial = {state: {}, prev: store.state}
-          return handler('put', initial)
+      .then(function ({handler, prev}) {
+        // if there is no previously set data, make it the store's initial state
+        if (typeof prev === 'undefined') {
+          return handler('prev', 'put', store.state)
             .then(function () {
-              return {handler, data: initial}
+              return {handler, prev: store.state}
             })
         }
-        return {handler, data}
+        return {handler, prev}
       })
-      .then(function ({handler, data}) {
+      .then(function ({handler, prev}) {
+        return handler('stored', 'get', namespace)
+          .then(function (data) {
+            return {handler, prev, stored: data}
+          })
+      })
+      .then(function ({handler, prev, stored}) {
         // unless the store's default state has changed, load the stored state
-        if (!equals(store.state, data.prev)) {
-          store.mutations.__reloadState__(store.state, data.state)
+        if (equals(prev, store.state)) {
+          store.mutations.__reloadState__(store.state, stored)
         }
-        return {handler, data}
+        return Promise.resolve()
       })
       .catch(function (err) {
         console.error(err)
@@ -114,15 +134,13 @@ module.exports = function (name, version) {
 
 // simple and easy to use promise wrappers for the
 // indexedDB transactions done above
-function storeTransaction (db, transactionType, ...args) {
+function storeTransaction (db, objectStore, transactionType, ...args) {
   if (arguments.length === 1) return storeTransaction.bind({}, db)
 
   const access = transactionType === 'get' ? 'readonly' : 'readwrite'
-  const transaction = db.transaction(['store'], access)
+  const transaction = db.transaction([objectStore], access)
 
-  console.log(transactionType, ...args)
-
-  const request = transaction.objectStore('store')[transactionType](...args)
+  const request = transaction.objectStore(objectStore)[transactionType](...args)
 
   return new Promise(function (resolve, reject) {
     request.onerror = function (err) {
