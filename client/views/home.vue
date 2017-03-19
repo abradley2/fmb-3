@@ -10,9 +10,16 @@
   <div class='center measure pt3 ph1'>
     <h3>Home</h3>
     <hr/>
+    <div>
+
+    </div>
+    <div>
+      
+    </div>
     <div v-if='loggedIn'>
       <div v-for='tournament in state.upcomingTournaments'>
         <h3>{{tournament.name}}</h3>
+        <span>{{tournament.startDate}}</span>
       </div>
     </div>
     <div v-else>
@@ -23,6 +30,7 @@
 </template>
 
 <script>
+const moment = require('moment')
 const xhr = require('xhr')
 const styles = {
 
@@ -33,6 +41,7 @@ exports.methods = {
 
 exports.created = function () {
   const user = this.$store.state.user
+  console.log('home.created()')
   if (user.loggedIn) {
     this.$store.dispatch('home/fetchDashboard', {userId: user.userId})
   }
@@ -63,7 +72,11 @@ exports.store = {
   },
   mutations: {
     getDashboard: function (state, dashboard) {
-      state.upcomingTournaments = dashboard.upcomingTournaments
+      state.upcomingTournaments = dashboard.upcomingTournaments.map(function (tournament) {
+        tournament.startDate = moment(tournament.start).format('MMM D YYYY')
+        console.log(tournament.startDate)
+        return tournament
+      })
     }
   }
 }

@@ -96,7 +96,7 @@ module.exports = function (name, version, promise) {
       }
     }
 
-    createPromise
+    return createPromise
       .then(function (handler) {
         // grab the data that was previously set
         return handler('prev', 'get', namespace)

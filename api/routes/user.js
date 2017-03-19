@@ -7,11 +7,11 @@ const mockDashboard = {
     {
       id: '1',
       name: 'Sample Tournanment A',
-      start: moment().add(1, 'days').unix()
+      start: moment().add(1, 'days').unix() * 1000
     }, {
       id: '2',
       name: 'Sample Tournament B',
-      start: moment().add(5, 'days').unix()
+      start: moment().add(5, 'days').unix() * 1000
     }
   ]
 }

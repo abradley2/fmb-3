@@ -11,7 +11,7 @@ window.Promise = require('es6-promise').Promise
 const routes = []
 const storeConfig = {
   plugins: [],
-  actions: {route: handleRoute},
+  actions: {},
   state: {},
   modules: {}
 }
@@ -24,6 +24,10 @@ initModule('home', ['/', '/home'], require('./views/home.vue'))
 initModule('login', ['/login'], require('./views/login.vue'))
 initModule('register', ['/register'], require('./views/register.vue'))
 initModule('profile', ['/profile'], require('./views/profile.vue'))
+initModule('createTournament',
+  ['/create-tournament', '/create-tournament/:tournamentId'],
+  require('./views/create-tournament.vue')
+)
 
 // initialize all components
 initComponent('v-navbar', require('./components/navbar.vue'))
@@ -37,31 +41,46 @@ initStore('user', require('./stores/user'))
 initStore('location', require('./stores/location'))
 initStore('modal', require('./stores/modal'))
 
-// Add development plugins if in dev
+// development mode
 if (process.env.NODE_ENV === 'development') {
   const createLogger = require('vuex/dist/logger')
   storeConfig.plugins.push(createLogger())
   persist('MyVueApp', 10)(storeConfig)
+    .then(function () {
+      appStart()
+    })
+    .catch(function (err) {
+      console.error(err)
+      appStart()
+    })
+}
+
+// production mode
+if (process.env.NODE_ENV === 'production') {
+  appStart()
 }
 
 // App start
-const store = new Vuex.Store(storeConfig)
-const router = new Router({routes})
+function appStart () {
+  const router = new Router({routes})
 
-router.afterEach(function (to, from) {
-  store.commit('location/setRoute', {to, from})
-})
-
-new Vue({
-  router,
-  store,
-  render: function (createElement) {
-    return createElement(app)
+  storeConfig.actions.route = function (ctx, params) {
+    router.push(params)
   }
-}).$mount('#app')
 
-function handleRoute (ctx, params) {
-  router.push(params)
+  router.afterEach(function (to, from) {
+    store.commit('location/setRoute', {to, from})
+  })
+
+  const store = new Vuex.Store(storeConfig)
+
+  new Vue({
+    router,
+    store,
+    render: function (createElement) {
+      return createElement(app)
+    }
+  }).$mount('#app')
 }
 
 // function to init a module and have it's routes/stores/component added to the app
