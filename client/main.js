@@ -4,7 +4,8 @@ const createLogger = require('vuex/dist/logger')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
-const {omit, recordState} = require('./utils')
+const wrapStore = require('./lib/vue-local-persist')('MyVueApp', 3)
+const {omit} = require('./utils')
 
 const routes = []
 const stores = {
@@ -34,6 +35,8 @@ initStore('env', require('./stores/env'))
 initStore('user', require('./stores/user'))
 initStore('location', require('./stores/location'))
 initStore('modal', require('./stores/modal'))
+
+wrapStore(stores)
 
 // App start
 const store = new Vuex.Store(stores)
@@ -84,9 +87,6 @@ function initView (namespace, config) {
 // for convenience, add the 'store' property of every vue as a module in the main store
 function initStore (namespace, store) {
   store.namespaced = true
-  if (process.env.NODE_ENV === 'development') {
-    recordState(namespace, store, require('localforage'))
-  }
   stores.modules[namespace] = store
 }
 
