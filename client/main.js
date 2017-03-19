@@ -4,8 +4,10 @@ const createLogger = require('vuex/dist/logger')
 const Router = require('vue-router')
 const xhr = require('xhr')
 const app = require('./app.vue')
-const wrapStore = require('./lib/vue-local-persist')('MyVueApp', 10)
+const persist = require('./lib/vue-local-persist')
 const {omit} = require('./utils')
+
+window.Promise = require('es6-promise').Promise
 
 const routes = []
 const stores = {
@@ -15,10 +17,17 @@ const stores = {
   modules: {}
 }
 
+const load = persist('MyVueApp', 10)(stores)
+
+console.time('loadState')
+load.then(function () {
+  console.timeEnd('loadState')
+})
+
 Vue.use(Router)
 Vue.use(Vuex)
 
-// initialize al view modules
+// initialize all view modules
 initModule('home', ['/', '/home'], require('./views/home.vue'))
 initModule('login', ['/login'], require('./views/login.vue'))
 initModule('register', ['/register'], require('./views/register.vue'))
@@ -35,12 +44,6 @@ initStore('env', require('./stores/env'))
 initStore('user', require('./stores/user'))
 initStore('location', require('./stores/location'))
 initStore('modal', require('./stores/modal'))
-
-const load = wrapStore(stores)
-console.time('hotReload')
-load.then(function () {
-  console.timeEnd('hotReload')
-})
 
 // App start
 const store = new Vuex.Store(stores)
