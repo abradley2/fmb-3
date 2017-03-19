@@ -54,9 +54,11 @@ module.exports = function (name, version) {
     if (typeof namespace !== 'string') return recordState('root', namespace)
 
     if (namespace === 'root') {
-      const deferreds = Object.keys(store.modules).map(function (ns) {
-        return recordState(ns, store.modules[ns])
-      })
+      const deferreds = []
+
+      for (var ns in store.modules) {
+        deferreds.push(recordState(ns, store.modules[ns]))
+      }
 
       return Promise.all(deferreds)
     }
