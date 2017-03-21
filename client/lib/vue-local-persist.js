@@ -79,7 +79,6 @@ module.exports = function (name, version, promise) {
     }
 
     store.mutations.__reloadState__ = function (state, newState) {
-      console.log('reload state = ', newState)
       for (var key in newState) {
         state[key] = newState[key]
       }
