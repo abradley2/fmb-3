@@ -45,7 +45,7 @@ initStore('modal', require('./stores/modal'))
 if (process.env.NODE_ENV === 'development') {
   const createLogger = require('vuex/dist/logger')
   storeConfig.plugins.push(createLogger())
-  persist('MyVueApp', 10)(storeConfig)
+  persist('MyVueApp', 11)(storeConfig)
     .then(function () {
       appStart()
     })

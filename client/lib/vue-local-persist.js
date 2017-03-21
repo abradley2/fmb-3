@@ -28,19 +28,19 @@ module.exports = function (name, version, promise) {
 
     function checkReady () {
       if (
-        db.objectStoreNames.contains('prev') &&
-        db.objectStoreNames.contains('stored')
+        db.objectStoreNames.contains('saved') &&
+        db.objectStoreNames.contains('initial')
       ) {
         resolveCreate(storeTransaction(db))
       }
     }
 
-    const stored = db.createObjectStore('stored', {keyPath: '__namespace__'})
+    const stored = db.createObjectStore('saved', {keyPath: '__namespace__'})
     stored.createIndex('state', 'state', {unique: false})
     stored.transaction.oncomplete = checkReady
     stored.transaction.onerror = rejectCreate
 
-    const prev = db.createObjectStore('prev', {keyPath: '__namespace__'})
+    const prev = db.createObjectStore('initial', {keyPath: '__namespace__'})
     prev.createIndex('state', 'state', {unique: false})
     prev.transaction.oncomplete = checkReady
     prev.transaction.onerror = rejectCreate
@@ -51,25 +51,13 @@ module.exports = function (name, version, promise) {
     resolveCreate(storeTransaction(db))
   }
 
-  return function recordState (namespace, store) {
-    if (typeof namespace !== 'string') return recordState('root', namespace)
-
-    if (namespace === 'root') {
-      const deferreds = []
-
-      for (var ns in store.modules) {
-        deferreds.push(recordState(ns, store.modules[ns]))
-      }
-
-      return Promise.all(deferreds)
-    }
-
+  function wrapStore (namespace, store) {
     // create a dedicated writer for the store, that has a bottleneck
     // so we aren't firing off a bunch of rapid writes all overwriting
     // eachother anyway
     const writer = bottleneck(function (state) {
       createPromise.then(function (handler) {
-        handler('stored', 'put', state)
+        handler('saved', 'put', state)
       })
     }, 500)
 
@@ -91,47 +79,59 @@ module.exports = function (name, version, promise) {
     }
 
     store.mutations.__reloadState__ = function (state, newState) {
+      console.log('reload state = ', newState)
       for (var key in newState) {
         state[key] = newState[key]
       }
     }
+  }
+
+  return function recordState (store) {
+    wrapStore('root', store)
+
+    for (var ns in store.modules) {
+      wrapStore(ns, store.modules[ns])
+    }
 
     return createPromise
       .then(function (handler) {
+        const moduleNames = Object.keys(store.modules)
         // grab the data that was previously set
-        return handler('prev', 'get', namespace)
-          .then(function (prev) {
-            return {handler, prev}
-          })
-      })
-      .then(function ({handler, prev}) {
-        // if there is no previously set data, make it the store's initial state
-        if (typeof prev === 'undefined') {
-          return handler('prev', 'put', store.state)
-            .then(function () {
-              return {handler, prev: store.state}
+        const getInitialStates = handler('initial', 'getAll')
+        const getSavedStates = handler('saved', 'getAll')
+
+        return Promise.all([getInitialStates, getSavedStates])
+          .then(function ([initialStates, savedStates]) {
+            // clean up any parts of state that are no longer in the app
+            // this does not have to block the promise chain
+            initialStates.map(state => state.__namespace__).map(ns => {
+              if (ns !== 'root' && moduleNames.indexOf(ns) === -1) {
+                handler('initial', 'delete', ns)
+                handler('saved', 'delete', ns)
+              }
             })
-        }
-        return {handler, prev}
-      })
-      .then(function ({handler, prev}) {
-        return handler('stored', 'get', namespace)
-          .then(function (data) {
-            return {handler, prev, stored: data}
+
+            // call setupStore on each module, which conditionally re-adds initial state
+            setupStore(store, getByNs(initialStates, 'root'), getByNs(savedStates, 'root'))
+            moduleNames.map(function (ns) {
+              setupStore(store.modules[ns], getByNs(initialStates, ns), getByNs(savedStates, ns))
+            })
+
+            return Promise.resolve()
           })
       })
-      .then(function ({handler, prev, stored}) {
-        // unless the store's default state has changed, load the stored state
-        if (equals(prev, store.state)) {
-          store.mutations.__reloadState__(store.state, stored)
-          return Promise.resolve()
-        } else {
-          return handler('prev', 'put', store.state)
-        }
-      })
-      .catch(function (err) {
-        console.error(err)
-      })
+
+    function setupStore (store, initialState, savedState) {
+      // if there is saved state, and initial state has not changed,
+      // we can safely reload the savedState
+      if (savedState && equals(initialState, store.state)) {
+        store.mutations.__reloadState__(store.state, savedState)
+      } else {
+        // otherwise, don't reload it. And make the new saved state the store's
+        // new initial state
+        storeTransaction(db, 'initial', 'put', store.state)
+      }
+    }
   }
 }
 
@@ -154,6 +154,17 @@ function storeTransaction (db, objectStore, transactionType, ...args) {
       resolve(e.target.result)
     }
   })
+}
+
+function getByNs (data, ns) {
+  var retVal = null
+  data.some(function (store) {
+    if (store.__namespace__ === ns) {
+      retVal = store
+      return true
+    }
+  })
+  return retVal
 }
 
 // utility function used to bottleneck writes after store mutations

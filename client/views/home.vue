@@ -1,9 +1,3 @@
-<style>
-.red {
-  color: #f00;
-}
-</style>
-
 <template>
 <div>
   <v-navbar></v-navbar>
@@ -21,7 +15,7 @@
       </div>
     </div>
     <div v-if='loggedIn'>
-      <div>
+      <div class='tc'>
         <v-button 
           type='confirm'
           text='Create a Tournament'
@@ -34,6 +28,7 @@
       </div>
     </div>
     <div v-else>
+      <hr/>
       <h3>Login to Create a Tournament</h3>
     </div>
   </div>
