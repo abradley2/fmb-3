@@ -1,17 +1,18 @@
 const express = require('express')
-const moment = require('moment')
 const userRoute = express.Router()
+
+const day = 86400000
 
 const mockDashboard = {
   upcomingTournaments: [
     {
       id: '1',
       name: 'Sample Tournanment A',
-      start: moment().add(1, 'days').unix() * 1000
+      start: Date.now() + (day * 2)
     }, {
       id: '2',
       name: 'Sample Tournament B',
-      start: moment().add(5, 'days').unix() * 1000
+      start: Date.now() + (day * 14)
     }
   ]
 }
