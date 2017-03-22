@@ -1,7 +1,9 @@
 <template>
 <div>
   <v-navbar></v-navbar>
-  <h3>Create Tournament</h3>
+  <div class='center measure ph2'>
+    <h3>Create Tournament</h3>
+  </div>
 </div>
 </template>
 

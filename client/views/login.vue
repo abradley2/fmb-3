@@ -1,7 +1,7 @@
 <template>
 <div>
   <v-navbar></v-navbar>
-  <div class='measure center ph1'>
+  <div class='measure center ph2'>
     <div class='tc'>
       <h3>Login</h3>
     </div>

@@ -1,7 +1,7 @@
 <template>
 <div>
   <v-navbar></v-navbar>
-  <div class='center measure'>
+  <div class='center measure ph2'>
     <div class='tc'>
       <h3>Register for FMB</h3>
     </div>
