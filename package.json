@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "corsify": "^2.1.0",
+    "date-fns": "^1.28.1",
     "deep-equal": "^1.0.1",
     "es6-promise": "^4.1.0",
     "express": "^4.14.1",
@@ -26,7 +27,6 @@
     "level": "^1.6.0",
     "localforage": "^1.5.0",
     "memdb": "^1.3.1",
-    "moment": "^2.17.1",
     "pino": "^4.0.3",
     "pino-colada": "^1.0.3",
     "request": "^2.79.0",

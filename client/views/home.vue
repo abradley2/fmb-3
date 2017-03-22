@@ -59,7 +59,9 @@
 </template>
 
 <script>
-const moment = require('moment')
+const {months} = require('../utils')
+const getMonth = require('date-fns/get_month')
+const getDate = require('date-fns/get_date')
 const xhr = require('xhr')
 const styles = {
 
@@ -104,8 +106,9 @@ exports.store = {
   mutations: {
     getDashboard: function (state, dashboard) {
       state.upcomingTournaments = dashboard.upcomingTournaments.map(function (tournament) {
-        tournament.startDate = moment(tournament.start).format('MMM D YYYY')
-        console.log(tournament.startDate)
+        const date = new Date(tournament.start)
+
+        tournament.startDate = `${months[getMonth(date)]}, ${getDate(date)}`
         return tournament
       })
     }
