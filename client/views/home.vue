@@ -2,8 +2,8 @@
 <div>
   <v-navbar></v-navbar>
   <div class='center measure pt3 ph2'>
-    <div class='ph3 pv3 mb4 bg-blue br2 flex-column items-center justify-center'>
-      <h2 class='white f4'>Find a tournament</h2>
+    <div class='ph3 pv3 mb4 bg-blue br2 flex flex-column items-center'>
+      <h2 class='self-center white f4'>Find a tournament</h2>
       <div class='dt'>
         <input 
           class='input-reset h2 pv0 ph2 lh-title bn bg-white br3--left'
