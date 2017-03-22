@@ -22,9 +22,32 @@
           :onclick='createTournament'
         ></v-button>
       </div>
-      <div v-for='tournament in state.upcomingTournaments'>
-        <h3>{{tournament.name}}</h3>
-        <span>{{tournament.startDate}}</span>
+      <div>
+        <hr/>
+        <p v-if='state.upcomingTournaments.length > 0'
+          class='black-80'
+        >
+          You are participating in the following events:
+        </p>
+        <p v-if='state.upcomingTournaments.length < 1'
+          class='black-80'
+        >
+          You have no upcoming events
+        </p>
+      </div>
+      <div class='mt4'>
+        <div 
+          v-for='tournament in state.upcomingTournaments'
+          class='bl bb b--black-80 pa1 mb4'
+        >
+          <a
+            :href='"#/tournament/" + tournament.id'
+            class='db mb3 fh3 link blue'
+          >
+            {{tournament.name}}
+          </a>
+          <span>{{tournament.startDate}}</span>
+        </div>
       </div>
     </div>
     <div v-else>
@@ -51,7 +74,7 @@ exports.methods = {
 exports.created = function () {
   const user = this.$store.state.user
   if (user.loggedIn) {
-    this.$store.dispatch('home/fetchDashboard', {userId: user.userId})
+    this.$store.dispatch('home/fetchDashboard', {userId: user.key})
   }
 }
 
