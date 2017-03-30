@@ -100,20 +100,23 @@ module.exports = function (name, version, promise) {
         const getSavedStates = handler('saved', 'getAll')
 
         return Promise.all([getInitialStates, getSavedStates])
-          .then(function ([initialStates, savedStates]) {
+          .then(function (states) {
+            const initialStates = getStateMap(states[0])
+            const savedStates = getStateMap(states[1])
+
             // clean up any parts of state that are no longer in the app
             // this does not have to block the promise chain
-            initialStates.map(state => state.__namespace__).map(ns => {
+            for (let ns in initialStates) {
               if (ns !== 'root' && moduleNames.indexOf(ns) === -1) {
                 handler('initial', 'delete', ns)
                 handler('saved', 'delete', ns)
               }
-            })
+            }
 
             // call setupStore on each module, which conditionally re-adds initial state
-            setupStore(store, getByNs(initialStates, 'root'), getByNs(savedStates, 'root'))
+            setupStore(store, initialStates.root, savedStates.root)
             moduleNames.map(function (ns) {
-              setupStore(store.modules[ns], getByNs(initialStates, ns), getByNs(savedStates, ns))
+              setupStore(store.modules[ns], initialStates[ns], savedStates[ns])
             })
 
             return Promise.resolve()
@@ -155,15 +158,11 @@ function storeTransaction (db, objectStore, transactionType, ...args) {
   })
 }
 
-function getByNs (data, ns) {
-  var retVal = null
-  data.some(function (store) {
-    if (store.__namespace__ === ns) {
-      retVal = store
-      return true
-    }
-  })
-  return retVal
+function getStateMap (states) {
+  return states.reduce(function (acc, cur) {
+    acc[cur.__namespace__] = cur
+    return acc
+  }, {})
 }
 
 // utility function used to bottleneck writes after store mutations
